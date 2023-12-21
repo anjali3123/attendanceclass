@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Button;
 use App\Models\Student;
 
 use Illuminate\Http\Request;
@@ -20,6 +21,33 @@ class StudentController extends Controller
     public function button(){
       $stander =Standerd::get();
       return view('student.button',compact('stander'));
+    }
+    public function buttonadd(Request $request){
+        echo"<pre>";print_r($request->all());exit;
+        $validator = Validator::make($request->all(), [
+            'inputs.*' => 'required',
+            'name.*' => 'required',
+
+
+        ],[
+
+        ]);
+        if ($validator->fails()) {
+            // echo"<pre>";print_r($validator->errors());exit;
+            return redirect()
+            ->back()
+            ->withErrors($validator)
+            ->withInput();
+        }
+        // $req = $request->all();
+        foreach($request->inputs as $key => $value){
+            $add = new Button();
+            $add->inputs = $value;
+            $add->name = $request->name[$key];
+            // echo"<pre>";print_r($add);
+            $add->save();
+        }
+        // exit;
     }
     public function index()
     {

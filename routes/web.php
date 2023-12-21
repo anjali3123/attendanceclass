@@ -87,6 +87,7 @@ Route::post('/student/update', [StudentController::class, 'update'])->name('stud
 Route::get('/student/edit/{id}', [StudentController::class, 'edit'])->name('student.edit');
 Route::post('/student/import', [StudentController::class, 'import'])->name('student.import');
 Route::post('/student/delete', [StudentController::class, 'delete'])->name('student.delete');
+Route::post('/student/buttonadd', [StudentController::class, 'buttonadd'])->name('button.add');
 
 
 Route::get('/standerd', [StanderdController::class, 'index'])->name('standerd.index');

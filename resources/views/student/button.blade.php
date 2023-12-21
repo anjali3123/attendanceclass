@@ -1,76 +1,111 @@
+<!-- dynamic-inputs.blade.php -->
+
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Laravel 8 Add/Remove Multiple Input Fields Example</title>
-    <!-- CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Inputs with Laravel</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <style>
-      .container {
+        .container {
             max-width: 600px;
+            margin: auto;
+        }
+
+        .input-group {
+            margin-bottom: 10px;
+        }
+
+        .remove-btn {
+            margin-left: 5px;
+            cursor: pointer;
+            color: red;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <form action="" method="POST">
-            @csrf
-            @if ($errors->any())
-            <div class="alert alert-danger" role="alert">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
-            @if (Session::has('success'))
-            <div class="alert alert-success text-center">
-                <p>{{ Session::get('success') }}</p>
-            </div>
-            @endif
-            {{-- <table class="table table-bordered" id="dynamicAddRemove">
-                <tr>
-                    <th>Subject</th>
-                    <th>Action</th>
-                </tr>
-                <tr>
-                    <td><input type="text" name="addMoreInputFields[0][subject]" placeholder="Enter subject" class="form-control" />
-                    </td>
-                    <td><button type="button" name="add" id="dynamic-ar" class="btn btn-outline-primary">Add Subject</button></td>
-                </tr>
-            </table> --}}
-           
 
-          
-            <button type="button" id="dynamic-ar" class="btn btn-outline-primary btn-block"><i class="fa fa-plus-circle"></i>Add</button>
-            <div class="row">
-                <div class="col-md-4" id="dynamicAddRemove">
-                    <div class="form-group">
-                      <label for="email">Email <span class="input-mandatory">*</span></label>
-                      <input type="text"  name="addMoreInputFields[0][]" value ="{{old('email')}}" class="form-control" id="exampleInputEmail1" placeholder="Enter Email">
-                     
+    <div class="container">
+        <h2>Add or Remove Dynamic Inputs</h2>
+        <form action="{{ route('button.add') }}" method="post">
+            @csrf
+
+            <div class="row" id="dynamic-inputs-container">
+                <!-- Default input -->
+                @foreach (old('inputs', ['']) as $key => $value)
+                    <div class="input-group">
+                        <div>
+                            <input type="text" name="inputs[]">
+                            @error("inputs.$key")
+                                <div class="error">{{ $message }}</div>
+                            @enderror
+
+                        </div>
+                        <div>
+
+                            <input type="file" name="name[]" >
+                            @error("name.$key")
+                            <div class="error">{{ $message }}</div>
+                        @enderror
+                        </div>
+                        @if ($key > 0 )
+
+                        <div>
+
+                            <span class="remove-btn" onclick="removeInput(this)">Remove</span>
+                        </div>
+                        @endif
                     </div>
-                  </div>
+                    <div>
+
+                    </div>
+                @endforeach
             </div>
+
+            <button type="button" onclick="addInput()">Add Input</button>
+
+
+
+            <button type="submit">Submit</button>
         </form>
     </div>
+
+    <script>
+        // Function to add a new input field
+        var i = 0;
+        function addInput() {
+            var newInput = `
+            <div class="input-group">
+                        <div>
+                            <input type="text" name="inputs[]">
+
+
+                        </div>
+                        <div>
+
+                            <input type="file" name="name[]" >
+
+                        </div>
+                        <div>
+
+                            <span class="remove-btn" onclick="removeInput(this)">Remove</span>
+                        </div>
+                    </div>
+            `;
+            $('#dynamic-inputs-container').append(newInput);
+        }
+
+        // Function to remove the clicked input field
+        function removeInput(btn) {
+            $(btn).closest('.input-group').remove();
+        }
+    </script>
+
 </body>
-<!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript">
-    var i = 0;
-    $("#dynamic-ar").click(function () {
-        ++i;
-        $("#dynamicAddRemove").append('<tr><td><input type="text" name="addMoreInputFields[' + i +
-            '][subject]" placeholder="Enter subject" class="form-control" /></td><td><button type="button" class="btn btn-outline-danger remove-input-field">Delete</button></td></tr>'
-            );
-        // $("#dynamicAddRemove").append(' <div class="form-group" style="margin-top: 10px;"> <input type="text" name="addMoreInputFields[' + i +'][]" value ="{{old('email')}}" class="form-control" id="exampleInputEmail1" placeholder="Enter Email"></div>');
-    });
-    $(document).on('click', '.remove-input-field', function () {
-        $(this).parents('tr').remove();
-    });
-</script>
 </html>

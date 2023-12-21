@@ -18,3 +18,4 @@ class Division extends Model
         return DB::table('divisions')->where($condition)->update(['isDeleted'=>1]);
     }
 }
+
